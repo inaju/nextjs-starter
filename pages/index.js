@@ -1,4 +1,6 @@
 import Ask from "@/components/block/ask";
+import Avatar from "@/components/block/avatar";
+import MainLayout from "@/components/block/layout/main-layout";
 import Loader from "@/components/block/loader";
 import Question from "@/components/block/question";
 import Visible from "@/components/block/visible";
@@ -13,33 +15,30 @@ export default function Home() {
 
   if (error) return 'An error has occurred: ' + error.message
   const response = !_.isEmpty(data?.data?.data) ? data?.data?.data : []
-  const isLoading = isPending && isFetching;
-
+  const isLoading = isFetching;
+  console.log(isPending, isFetching, 'isPending')
   return (
-    <main
-      className={`flex min-h-screen flex-col 
-      overflow-none max-w-[21.875rem] mx-6 
-      lg:max-w-full w-full lg:items-center 
-      justify-between lg:px-24 py-10 relative`}>
-      <Visible when={isLoading}>
-        <Loader />
-      </Visible>
-      <Visible when={!isLoading}>
-        <div className="flex flex-col gap-2">
-          <div className="bg-white p-1 mb-10 sticky top-0 z-10">
-            <h1 className="flex flex-start text-3xl font-bold mb-10">Komi</h1>
-            <div>
-              <Ask mutation={mutation} />
-            </div>
+    <MainLayout>
+
+
+      <div className="flex flex-col gap-2">
+        <div className="bg-white p-1 mb-10 sticky top-0 z-10">
+          <h1 className="flex flex-start text-3xl font-bold mb-10 justify-between">Komi
+            <Avatar />
+          </h1>
+          <div>
+            <Ask mutation={mutation} />
           </div>
-          <Visible when={response?.length && !isLoading} otherwise={<p>No questions asked, Please ask your question</p>}>
-            <div className="flex flex-col gap-2">
-              {response?.map((item) =>
-                <Question item={item} key={item?.id} likeQuestionMutation={likeQuestionMutation} />)}
-            </div>
-          </Visible>
         </div>
-      </Visible>
-    </main>
+        <Visible when={response?.length} otherwise={<p>No questions asked, Please ask your question</p>}>
+          <div className="flex flex-col gap-2">
+            {response?.map((item) => <div key={item?.id}>
+              <Question item={item} likeQuestionMutation={likeQuestionMutation} />
+            </div>
+            )}
+          </div>
+        </Visible>
+      </div>
+    </MainLayout>
   )
 }

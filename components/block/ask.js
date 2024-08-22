@@ -14,7 +14,10 @@ import {
     FormMessage
 } from "@/components/ui/form"
 import { Textarea } from '../ui/textarea'
+import { useSession } from "next-auth/react"
 const Ask = ({ mutation }) => {
+    const { data: session, ...rest } = useSession()
+console.log(session,'sessionsession')
     const formSchema = z.object({
         question: z.string().min(2, {
             message: "question must be at least 2 characters.",
@@ -28,7 +31,8 @@ const Ask = ({ mutation }) => {
     })
     function onSubmit(values) {
         mutation.mutate({
-            title: values?.question
+            title: values?.question,
+            user: session?.user,
         })
         form?.reset()
     }

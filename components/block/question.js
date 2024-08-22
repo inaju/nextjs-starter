@@ -19,7 +19,15 @@ const Question = ({ item, likeQuestionMutation }) => {
     const isGreaterThanZero = item?.like > 0
     return (
         <div key={item?.title} className="w-full p-4 space-y-6 border border-slate-4 rounded-lg">
-            <p>
+            <div className='flex gap-2'>
+                <img
+                    priority="high"
+                    className='rounded-full border-2 border-slate-200'
+                    src={item?.user?.image} alt="user image" height={25} width={25} />
+                <h2 className='font-semibold text-slate-800'> {item?.user?.name}
+                </h2>
+            </div>
+            <p className='text-slate-600'>
                 {item?.title}
             </p>
             <div onClick={() => handleLikeAction()} className='flex gap-1 items-center'>
@@ -28,7 +36,7 @@ const Question = ({ item, likeQuestionMutation }) => {
                     {isGreaterThanZero && isLiked ? item?.like : null}
                 </span>
             </div>
-        </div>
+        </div >
     )
 }
 
