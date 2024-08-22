@@ -51,7 +51,9 @@ const Ask = ({ postTodos, mutation }) => {
                             </FormItem>
                         )}
                     />
-                    <Button type="submit">
+                    <Button
+                        disabled={mutation?.isPending}
+                        type="submit">
                         {mutation?.isPending ? "loading..." : "Send !"}
                     </Button>
                 </form>

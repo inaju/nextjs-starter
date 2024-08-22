@@ -17,7 +17,7 @@ export default async function handler(req, res) {
                 res.status(500).send(error.message);
             }
         case 'GET':
-            const question = await QuestionModel.find({});
+            const question = await QuestionModel.find({}).sort({ createdAt: -1 });
             try {
                 res.status(200).json({ data: question })
             } catch (e) {

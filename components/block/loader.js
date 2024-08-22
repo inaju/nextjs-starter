@@ -1,5 +1,7 @@
 import React from 'react'
-const Loader = () => {
+import { Loader } from 'lucide-react'
+
+const LoaderBlock = () => {
     return (
         <div>
             <Loader />
@@ -7,4 +9,4 @@ const Loader = () => {
     )
 }
 
-export default Loader
+export default LoaderBlock

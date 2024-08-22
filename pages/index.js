@@ -29,21 +29,30 @@ export default function Home() {
   if (error) return 'An error has occurred: ' + error.message
 
   const response = !_.isEmpty(data?.data?.data) ? data?.data?.data : []
+  const isLoading = isPending && isFetching
   return (
     <main
-      className={`flex min-h-screen flex-col items-center justify-between p-24 relative`}>
-      {isPending || isFetching && <Loader /> }
+      className={`flex min-h-screen flex-col max-w-[400px] lg: max-w-full w-full items-center justify-between lg:px-24 py-10 relative`}>
+      {isLoading && <Loader />}
+      {!isLoading &&
         <div className="flex flex-col gap-2">
-          <div className="space-y-2 mb-10 sticky top-0 z-10 bg-white p-1">
+          <div className="bg-white p-1 mb-10 sticky top-0 z-10">
+
+          <h1 className="flex flex-start text-3xl font-bold mb-10">Komi</h1>
+          <div className="">
             <Ask postTodos={postTodos} mutation={mutation} />
           </div>
-          <div className="flex flex-col gap-2">
-
-            {response?.map((item) =>
-              <Question item={item} key={item?.id} likeQuestionMutation={likeQuestionMutation} />)}
           </div>
+          {response?.length && !isLoading ?
+            <div className="flex flex-col gap-2">
+              {response?.map((item) =>
+                <Question item={item} key={item?.id} likeQuestionMutation={likeQuestionMutation} />)}
+            </div>
+            :
+            <p>No questions asked, Please ask your question</p>
+          }
         </div>
-      {/* } */}
+      }
 
     </main>
   )
