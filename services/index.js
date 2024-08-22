@@ -1,47 +1,45 @@
 import axios from "axios";
 
-const getTodos = () => {
+const axiosheaders = {
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
+}
+const getTodos = async () => {
     try {
-        const response = axios
+        const response = await axios
             .get('/api/question', {
-                headers: {
-                    Accept: 'application/json',
-                },
+                headers: axiosheaders,
             })
         return response;
     } catch (err) {
-        console.log(err, 'error')
+        throw new Error(err);
     }
 }
-const likeTodo = (data) => {
+const likeTodo = async (data) => {
+
     try {
-        const response = axios
+        const response = await axios
             .put('/api/question/like', data,
                 {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Accept: 'application/json',
-                    },
+                    headers: axiosheaders,
                 })
         return response?.data
     } catch (err) {
-        console.log(err, 'error message')
+        throw new Error(err);
     }
 }
-const postTodos = (data) => {
+const postTodos = async (data) => {
+
     try {
-        const response = axios
+        const response = await axios
             .post('/api/question', data,
                 {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Accept: 'application/json',
-                    },
+                    headers: axiosheaders,
                 })
         return response?.data
     } catch (err) {
-        console.log(err, 'error')
+        throw new Error(err);
     }
 }
 
-export { getTodos, postTodos,likeTodo }
+export { getTodos, likeTodo, postTodos };

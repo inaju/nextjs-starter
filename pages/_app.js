@@ -1,3 +1,4 @@
+import { Toaster } from '@/components/ui/toaster';
 import '@/styles/globals.css';
 import {
   QueryClient,
@@ -10,7 +11,8 @@ export default function App({ Component, pageProps }) {
   return <QueryClientProvider client={queryClient}>
     <main className={GeistSans.className}>
       <Component {...pageProps} />
+      <Toaster />
     </main>  
-      </QueryClientProvider>
+    </QueryClientProvider>
 
 }

@@ -14,8 +14,7 @@ import {
     FormMessage
 } from "@/components/ui/form"
 import { Textarea } from '../ui/textarea'
-const Ask = ({ postTodos, mutation }) => {
-
+const Ask = ({ mutation }) => {
     const formSchema = z.object({
         question: z.string().min(2, {
             message: "question must be at least 2 characters.",

@@ -1,9 +1,8 @@
-import connectMongoDB from "@/libs/mongodb";
+import connectMongoDB from "@/lib/utils";
 import { QuestionModel } from "@/models/question";
 await connectMongoDB();
 
 export default async function handler(req, res) {
-
     if (req.method === 'PUT') {
         const { value, _id } = req.body;
         // if (_.isEmpty(value)) { return res.status(400).json({ message: "please add a value" }); }
@@ -11,7 +10,6 @@ export default async function handler(req, res) {
         try {
             const question = await QuestionModel.findById({ _id: _id });
             const currentLikeValue = question?.like
-            console.log(currentLikeValue, 'currentLikeValue')
             const response = await QuestionModel.updateOne({ _id: _id }, { like: currentLikeValue + 1 });
             res.status(200).json({ message: "success", data: question })
         } catch (error) {

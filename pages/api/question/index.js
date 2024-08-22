@@ -1,4 +1,4 @@
-import connectMongoDB from "@/libs/mongodb";
+import connectMongoDB from "@/lib/utils";
 import { QuestionModel } from "@/models/question";
 await connectMongoDB();
 
