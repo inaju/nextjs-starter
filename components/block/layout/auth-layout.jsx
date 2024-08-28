@@ -1,13 +1,19 @@
 import React from 'react'
+import Header from '../header'
 
 const AuthLayout = (props) => {
     return (
         <main
-            className={`flex min-h-screen flex-col 
-      overflow-y-none overflow-x-none max-w-[21.875rem] mx-6 
-      lg:max-w-full  lg:items-center 
-      justify-center lg:px-24 py-10 relative`}>
-            {props.children}
+            className={`flex bg-slate-100 h-screen flex-col 
+      overflow-y-none overflow-x-none  
+      lg:max-w-full items-start 
+      justify-start relative  `}>
+            <div className='bg-white w-full  py-3 px-10 shadow-sm'>
+                <Header />
+            </div>
+            <div className=' px-6 lg:px-24  my-auto mx-auto'>
+                {props.children}
+            </div>
         </main>
     )
 }

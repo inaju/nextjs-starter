@@ -3,7 +3,7 @@ import { GeistSans } from "geist/font/sans";
 
 export default function Document() {
   return (
-    <Html lang="en" className={GeistSans.className}>
+    <Html lang="en" className={GeistSans.className} suppressHydrationWarning>
       <Head />
       <body>
         <Main />

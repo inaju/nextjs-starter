@@ -4,7 +4,8 @@ const questionSchema = new Schema(
   {
     title: { type: String, unique: true, dropDups: true, },
     like: Number,
-    user: { type: Object, },
+    userId: { type: String, },
+    likedByUsers: { type: Array, },
   },
   {
     timestamps: true,

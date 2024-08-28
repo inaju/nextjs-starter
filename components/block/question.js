@@ -1,39 +1,64 @@
 import { Heart } from 'lucide-react'
+import { useSession } from 'next-auth/react'
 import React, { useState } from 'react'
 
+import relativeTime from 'dayjs/plugin/relativeTime';
+import dayjs from 'dayjs';
+import Image from 'next/image';
+
+// Extend dayjs with the relativeTime plugin
+dayjs.extend(relativeTime);
+
+
+
 const Question = ({ item, likeQuestionMutation }) => {
-    const [isLiked, setIsLiked] = useState(item?.like > 0 ? true : false)
+    const { data: session } = useSession()
+    const likes = item?.likedByUsers
+    const userId = session?.user?.id;
+    const [isLiked, setIsLiked] = useState(likes.includes(userId))
 
     const handleLikeAction = () => {
         try {
             likeQuestionMutation.mutate({
                 _id: item?._id,
-                value: isLiked
+                userId: userId,
             })
             setIsLiked(true)
         } catch (err) {
             console.log(err, 'here is it')
         }
-        // setIsLiked(!isLiked)
     }
-    const isGreaterThanZero = item?.like > 0
+    const isGreaterThanZero = likes?.length > 0
+
+    // Calculate time from now for a future date
+    const futureDate = dayjs(item?.createdAt);
+    const timeFromNow = futureDate.fromNow();
+
     return (
-        <div key={item?.title} className="w-full p-4 space-y-6 border border-slate-4 rounded-lg">
-            <div className='flex gap-2'>
-                <img
-                    priority="high"
-                    className='rounded-full border-2 border-slate-200'
-                    src={item?.user?.image} alt="user image" height={25} width={25} />
-                <h2 className='font-semibold text-slate-800'> {item?.user?.name}
-                </h2>
+        <div key={item?.title} className="w-full p-4 space-y-6 border border-slate-4 rounded-lg shadow-sm bg-white ">
+            <div className="space-y-3">
+                <div className='flex gap-2  items-center'>
+                    <Image
+                        className='rounded-full border-2 border-slate-200'
+                        src={item?.author?.image} alt="user image" height={25} width={25} />
+                    <h2 className='font-semibold text-[#1e3038]'> {item?.author?.name}</h2>
+                    <div className='flex justify-center'>
+
+                        <p className='text-slate-500 text-[0.6rem]'>
+                            {timeFromNow}
+                        </p>
+                    </div>
+                </div>
+                <p className='text-[#303030]'>
+                    {item?.title}
+                </p>
+
             </div>
-            <p className='text-slate-600'>
-                {item?.title}
-            </p>
+
             <div onClick={() => handleLikeAction()} className='flex gap-1 items-center'>
-                <Heart size={20} color={isGreaterThanZero && isLiked ? `#ff0000` : `#000000`} strokeWidth={isGreaterThanZero && isLiked ? 1 : 0.75} />
+                <Heart size={20} color={isGreaterThanZero && isLiked ? `#ff0000` : `#000000`} strokeWidth={isGreaterThanZero && isLiked ? 2 : 1.75} />
                 <span className='text-slate-600 text-sm'>
-                    {isGreaterThanZero && isLiked ? item?.like : null}
+                    {isGreaterThanZero && isLiked ? likes?.length : null}
                 </span>
             </div>
         </div >

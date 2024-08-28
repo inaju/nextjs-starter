@@ -1,4 +1,5 @@
 import AuthProvider from '@/components/block/auth-provider';
+import ErrorBoundary from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
 import '@/styles/globals.css';
 import {
@@ -11,15 +12,15 @@ import { SessionProvider } from 'next-auth/react';
 const queryClient = new QueryClient()
 
 export default function App({ Component, pageProps: { session, ...pageProps } }) {
-  return <SessionProvider session={session}>
-    {/* <AuthProvider>  */}
-    <QueryClientProvider client={queryClient}>
-      <main className={GeistSans.className}>
-        <Component {...pageProps} />
-        <Toaster />
-      </main>
-    </QueryClientProvider>
-    {/* </AuthProvider> */}
-  </SessionProvider >
+  return <ErrorBoundary>
+    <SessionProvider session={session}>
+      <QueryClientProvider client={queryClient}>
+        <main className={GeistSans.className}>
+          <Component {...pageProps} />
+          <Toaster />
+        </main>
+      </QueryClientProvider>
+    </SessionProvider >
+  </ErrorBoundary>
 
 }

@@ -4,22 +4,25 @@ await connectMongoDB();
 
 export default async function handler(req, res) {
     if (req.method === 'PUT') {
-        const { value, _id } = req.body;
-        // if (_.isEmpty(value)) { return res.status(400).json({ message: "please add a value" }); }
-        // if (_.isEmpty(_id)) { return res.status(400).json({ message: "please add a _id" }); }
+        const { _id, userId } = req.body;
         try {
             const question = await QuestionModel.findById({ _id: _id });
-            const currentLikeValue = question?.like
-            const response = await QuestionModel.updateOne({ _id: _id }, { like: currentLikeValue + 1 });
-            res.status(200).json({ message: "success", data: question })
+            const questionIsLiked = question?.likedByUsers?.includes(userId)
+            let updateOperation;
+
+            if (questionIsLiked) {
+                updateOperation = { $pull: { likedByUsers: userId } };
+            } else {
+                updateOperation = { $addToSet: { likedByUsers: userId } };
+            }
+            const response=await QuestionModel.findOneAndUpdate(
+                { _id: _id },
+                updateOperation,
+                { new: true }
+            );
+            res.status(200).json({ message: "success", data: response })
         } catch (error) {
             res.status(500).send({ message: error.message, error: true });
         }
     }
-}
-
-const incrementOrDecrementFunc = (value, currentLikeValue) => {
-    if (value && currentLikeValue >= 0) {
-        return value ? currentLikeValue + 1 : currentLikeValue - 1
-    } else return 0;
-}
+};

@@ -12,10 +12,16 @@ export default NextAuth({
       clientSecret: process.env.GOOGLE_SECRET,
     }),
   ],
+  session: { strategy: "jwt" },
   callbacks: {
-    async redirect({ url, baseUrl }) {
-      return "/";
+    async jwt({ token, user }) {
+      return { ...token, ...user }
     },
+    async session({ session, token, user }) {
+      session.user = token;
+      return session;
+    }
+
   },
   adapter: MongoDBAdapter(client),
 });

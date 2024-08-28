@@ -11,16 +11,11 @@ export const useHandleQuestion=()=>{
     const { toast } = useToast()
 
     const queryClient = useQueryClient()
-    const { isPending, error, data, isFetching } = useQuery({ queryKey: ['todos'], queryFn: getTodos })
+    const { isPending, error, data, isFetching, isLoading } = useQuery({ queryKey: ['todos'], queryFn: getTodos })
     const likeQuestionMutation = useMutation({
       mutationFn: likeTodo,
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['todos'] })
-        queryClient.invalidateQueries({ queryKey: ['todos'] })
-        toast({
-            title: "Sweetttt!",
-            description: 'Question Liked',
-          })
       },
     })
     const mutation = useMutation({
@@ -45,6 +40,6 @@ export const useHandleQuestion=()=>{
   
   
     return {
-        isPending, error, data, isFetching ,likeQuestionMutation,mutation
+        isPending, error, data, isFetching ,likeQuestionMutation,mutation,isLoading
     }
 }

@@ -5,7 +5,7 @@ if (!process.env.MONGODB_URI) {
 }
 
 const uri = process.env.MONGODB_URI;
-const options = { appName: "devrel.template.nextjs" };
+const options = { appName: "base-cluster" };
 
 let client: MongoClient;
 
@@ -24,8 +24,13 @@ if (process.env.NODE_ENV === "development") {
   // In production mode, it's best to not use a global variable.
   client = new MongoClient(uri, options);
 }
+// listDatabases(client);
+
 
 // Export a module-scoped MongoClient. By doing this in a
 // separate module, the client can be shared across functions.
 
+// Export the MongoClient instance if needed elsewhere
 export default client;
+
+

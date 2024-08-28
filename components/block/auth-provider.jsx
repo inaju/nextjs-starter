@@ -17,7 +17,7 @@ const AuthProvider = (props) => {
         if (shouldRedirectToLogin) {
             router.push('/auth/login')
         };
-    }, [shouldRedirectToLogin])
+    }, [shouldRedirectToLogin,router])
 
     if (!shouldRedirectToLogin) {
         return (
