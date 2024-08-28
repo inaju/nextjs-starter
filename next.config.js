@@ -3,7 +3,8 @@ const nextConfig = {
   output: "standalone",
   reactStrictMode: true,
   env: {
-    NEXT_IMGBB_API_KEY: process.env.NEXT_IMGBB_API_KEY
+    NEXT_IMGBB_API_KEY: process.env.NEXT_IMGBB_API_KEY,
+    NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET
   },
   transpilePackages: ["geist"],
   images: {

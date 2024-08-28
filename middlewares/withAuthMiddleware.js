@@ -14,7 +14,7 @@ export function withAuthMiddleware(middleware) {
           return NextResponse.next();
       
         const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
-        console.log(token,'token')
+        console.log(token,NEXTAUTH_SECRET,'token')
         if (!token) {
             return NextResponse.redirect(new URL('/auth/login', request.url));
         }
