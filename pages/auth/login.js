@@ -8,7 +8,7 @@ const Login = () => {
     if (session) {
         return (
             <AuthLayout>
-                <div className="flex items-center justify-center flex-col gap-8 text-5xl ">
+                <div className="flex items-center justify-center flex-col gap-8 text-2xl ">
                     Signed in as {session.user.email} <br />
                     <Button onClick={() => signOut()}>Sign out</Button>
                 </div>
@@ -23,7 +23,7 @@ const Login = () => {
                         You are not signed in
                     </div>
                     <div className=" text-lg text-muted-foreground">
-                       Mitchel says, the process is really smooth &#128521;
+                        Mitchel says, the process is really smooth &#128521;
                     </div>
                 </div>
                 <Button variant="outline"
