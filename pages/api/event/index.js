@@ -7,39 +7,44 @@ await connectMongoDB();
 
 export default async function handler(req, res) {
     try {
-        const { name, eventMode, description, time, date, meridem, imageUrl,eventId, likedByUsers, noOfAttendees, otherData } = req.body;
+        const { name, eventMode, description, time, date, meridem, imageUrl, eventId, likedByUsers, noOfAttendees, otherData } = req.body;
         switch (req.method) {
             case 'POST':
-                const nextRequestMeta = (key) => req[Reflect.ownKeys(req).find(
-                    (s) => String(s) === key
-                )];
-                const host = nextRequestMeta("Symbol(kHeaders)").host
-                const protocol = nextRequestMeta("Symbol(NextInternalRequestMeta)")._protocol
-                const baseUrl = protocol + "://" + host
-                if (!name) return res.status(400).json({ message: "please add a name" });
-                if (!eventMode) return res.status(400).json({ message: "please add a eventMode" });
-                if (!time) return res.status(400).json({ message: "please add a time" });
-                if (!date) return res.status(400).json({ message: "please add a date" });
-                if (!meridem) return res.status(400).json({ message: "please add a meridem" });
-                if (!description) return res.status(400).json({ message: "please add a description" });
-                const generatedEventId = generateShortUUID(name)
-                const qrCode = await returnQrCode(baseUrl, generatedEventId)
-                const newEvent = new EventModel({
-                    qrcode: qrCode?.imageUrl,
-                    eventId: generatedEventId,
-                    name: name,
-                    eventMode: eventMode,
-                    description: description,
-                    time: time,
-                    date: date,
-                    meridem: meridem,
-                    imageUrl: imageUrl,
-                    likedByUsers: {},
-                    noOfAttendees: 0,
-                    otherData: {}
-                });
-                await newEvent.save();
-                res.status(200).json({ message: "event generated", data: newEvent })
+                try {
+
+                    const nextRequestMeta = (key) => req[Reflect.ownKeys(req).find(
+                        (s) => String(s) === key
+                    )];
+                    const host = nextRequestMeta("Symbol(kHeaders)").host
+                    const protocol = nextRequestMeta("Symbol(NextInternalRequestMeta)")._protocol
+                    const baseUrl = protocol + "://" + host
+                    if (!name) return res.status(400).json({ message: "please add a name" });
+                    if (!eventMode) return res.status(400).json({ message: "please add a eventMode" });
+                    if (!time) return res.status(400).json({ message: "please add a time" });
+                    if (!date) return res.status(400).json({ message: "please add a date" });
+                    if (!meridem) return res.status(400).json({ message: "please add a meridem" });
+                    if (!description) return res.status(400).json({ message: "please add a description" });
+                    const generatedEventId = generateShortUUID(name)
+                    const qrCode = await returnQrCode(baseUrl, generatedEventId)
+                    const newEvent = new EventModel({
+                        qrcode: qrCode?.imageUrl,
+                        eventId: generatedEventId,
+                        name: name,
+                        eventMode: eventMode,
+                        description: description,
+                        time: time,
+                        date: date,
+                        meridem: meridem,
+                        imageUrl: imageUrl,
+                        likedByUsers: {},
+                        noOfAttendees: 0,
+                        otherData: {}
+                    });
+                    await newEvent.save();
+                    res.status(200).json({ message: "event generated", data: newEvent })
+                } catch (e) {
+                    console.log(e, "createEvent error")
+                }
 
             case 'GET':
                 try {

@@ -18,6 +18,7 @@ import { HomeLayout } from "..";
 import { StarOff } from "lucide-react";
 import { StarsIcon } from "lucide-react";
 import { toast } from "@/components/ui/use-toast"
+import _ from "lodash";
 
 function EventPage() {
     const [value, setValue] = useState('dddd');
@@ -59,12 +60,12 @@ function EventPage() {
     };
     return (
         <MainLayout>
-            <Visible when={singleResponse} otherwise={<LoaderBlock />}>
+            <Visible when={!_.isEmpty(singleResponse)} otherwise={<LoaderBlock />}>
                 <div>
                     <div className="flex flex-col gap-2 mb-4 " >
                         <CustomBreadcrumbs pathname={router?.asPath} label={`${singleResponse?.name} Event Page`} />
                     </div>
-                    <div className="h-64 w-full lg:h-[400px] relative rounded-xl ">
+                    <div className="h-[350px] w-full lg:h-[600px] relative rounded-xl ">
                         <Image src={singleResponse?.imageUrl} alt="event image" layout="fill" // required
                             objectFit="cover" // change to suit your needs
                             className="rounded-xl"
