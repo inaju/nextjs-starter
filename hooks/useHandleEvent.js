@@ -60,6 +60,6 @@ export const useHandleEvent = () => {
 
     return {
         getSingleEventFunc, singleResponse,
-        error, data, updatedResponse, mutation,
+        error, data, updatedResponse, mutation,isLoading,
     }
 }

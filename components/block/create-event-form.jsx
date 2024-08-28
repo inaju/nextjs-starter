@@ -81,7 +81,7 @@ export function CreateEventForm({ onOpenChange }) {
       const response = await imageUploaded(data?.uimage);
       imageUrl = response
       newData.imageUrl = imageUrl
-     mutation.mutate(newData)
+      mutation.mutate(newData)
     } else {
 
     }
@@ -93,7 +93,7 @@ export function CreateEventForm({ onOpenChange }) {
     let newData = { ...data }
     newData.uimage = selectedImage
     await handleSubmit(newData)
-    if (!isLoading && singleResponse?.eventId) {
+    if (!isLoading) {
       onOpenChange(false)
     }
     setIsButtonClicked(false)
@@ -115,17 +115,22 @@ export function CreateEventForm({ onOpenChange }) {
 
   let base64String = ""
   async function imageUploaded(file) {
-    return new Promise((resolve, reject) => {
-      let reader = new FileReader();
-      reader.onload = async function () {
-        base64String = reader.result.replace("data:", "")
-          .replace(/^.+,/, "");
-        const formData = new FormData();
-        formData.append('image', base64String?.toString());
-        resolve(await postImage(formData))
-      }
-      reader.readAsDataURL(file);
-    })
+    try {
+
+      return new Promise((resolve, reject) => {
+        let reader = new FileReader();
+        reader.onload = async function () {
+          base64String = reader.result.replace("data:", "")
+            .replace(/^.+,/, "");
+          const formData = new FormData();
+          formData.append('image', base64String?.toString());
+          resolve(await postImage(formData))
+        }
+        reader.readAsDataURL(file);
+      })
+    } catch (err) {
+      console.log("Error Converting image to base 64", err)
+    }
   }
 
   const postImage = async (formData) => {
@@ -133,6 +138,7 @@ export function CreateEventForm({ onOpenChange }) {
       const response = await axios.post(`https://api.imgbb.com/1/upload?key=${process.env.NEXT_IMGBB_API_KEY}`, formData)
       return response?.data?.data?.url;
     } catch (err) {
+      console.log(err, 'error uploading image to imgbb')
       throw new Error(err);
     }
   }

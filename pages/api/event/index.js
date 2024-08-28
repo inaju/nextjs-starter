@@ -44,12 +44,14 @@ export default async function handler(req, res) {
                     res.status(200).json({ message: "event generated", data: newEvent })
                 } catch (e) {
                     console.log(e, "createEvent error")
+                        res.status(400).json({
+                            message: `there was an error creating event`,
+                            error: e
+                        })
                 }
 
             case 'GET':
                 try {
-                    console.log(req.params?.eventId, 'eventId rrr')
-                    // const { eventId } = req?.params
                     if (eventId) {
                         const event = await EventModel.findOne({
                             eventId: eventId
@@ -60,7 +62,6 @@ export default async function handler(req, res) {
                         res.status(200).json({ data: event })
 
                     }
-                    // console.log(event,"errrrrrrrrr")
                 } catch (e) {
                     console.log(e)
                 }
@@ -77,7 +78,7 @@ export default async function handler(req, res) {
 
 const returnQrCode = async (baseurl, uuid) => {
     console.log(baseurl, 'baseurl')
-    const url = baseurl + "/events/" + uuid;
+    const url = baseurl + "/event/" + uuid;
     const response = await axios.post(`${baseurl}/api/upload-image`, {
         base64String: await generateQR(url)
     }, {

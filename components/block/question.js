@@ -18,12 +18,12 @@ const Question = ({ item, likeQuestionMutation }) => {
     const [isLiked, setIsLiked] = useState(likes.includes(userId))
 
     const handleLikeAction = () => {
+        setIsLiked(!isLiked)
         try {
             likeQuestionMutation.mutate({
                 _id: item?._id,
                 userId: userId,
             })
-            setIsLiked(true)
         } catch (err) {
             console.log(err, 'here is it')
         }
@@ -56,7 +56,7 @@ const Question = ({ item, likeQuestionMutation }) => {
             </div>
 
             <div onClick={() => handleLikeAction()} className='flex gap-1 items-center'>
-                <Heart size={20} color={isGreaterThanZero && isLiked ? `#ff0000` : `#000000`} strokeWidth={isGreaterThanZero && isLiked ? 2 : 1.75} />
+                <Heart size={25} color={isLiked ? `#ff0000` : `#000000`} strokeWidth={isLiked ? 2 : 1.75} />
                 <span className='text-slate-600 text-sm'>
                     {isGreaterThanZero && isLiked ? likes?.length : null}
                 </span>

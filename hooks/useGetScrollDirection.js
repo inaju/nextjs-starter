@@ -5,7 +5,7 @@ const useGetScrollDirection = () => {
 
     useEffect(() => {
         const threshold = 0;
-        let lastScrollY = window.pageYOffset + 200;
+        let lastScrollY = window.pageYOffset + 500;
         let ticking = false;
 
         const updateScrollDir = () => {

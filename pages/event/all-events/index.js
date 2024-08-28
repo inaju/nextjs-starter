@@ -21,7 +21,7 @@ export default function EventsPage() {
 export const EventsLayout = () => {
 
     const { getSingleEventFunc, singleResponse,
-        error, data, updatedResponse, mutation, } = useHandleEvent();
+        error, data, updatedResponse, mutation, isLoading } = useHandleEvent();
     const router = useRouter();
     if (error) return 'An error has occurred: ' + error.message
     const response = !_.isEmpty(data?.data) ? data?.data : []
@@ -32,9 +32,11 @@ export const EventsLayout = () => {
         return formattedDate;
     }
 
+    console.log(isLoading, 'isLoading')
+
     return (
-        <Visible when={response} otherwise={<LoaderBlock />}>
-            <Visible when={response?.length} otherwise={<p>No Events Created, Please Create and event</p>}>
+        <Visible when={!isLoading} otherwise={<LoaderBlock />}>
+            <Visible when={response?.length > 1} otherwise={<p>No Events Created, Please Create and event</p>}>
                 <div
                     className="flex flex-row flex-wrap  flex-grow gap-4   rounded-lg  items-center justify-start">
                     {response?.map((item, index) =>

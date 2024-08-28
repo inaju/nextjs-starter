@@ -104,7 +104,7 @@ function EventPage() {
                             <Download size={15} />
                             QR Code
                         </Button>
-                        <CopyToClipboard text={`${typeof window == undefined && window?.location}`} onCopy={(text, result) => toast({
+                        <CopyToClipboard text={`${router.asPath}`} onCopy={(text, result) => toast({
                             title: "Awesome!",
                             description: "Link Copied",
 
