@@ -49,7 +49,7 @@ const Question = ({ item, likeQuestionMutation }) => {
                         </p>
                     </div>
                 </div>
-                <p className='text-[#303030]'>
+                <p className='text-[#303030] whitespace-pre-line'>
                     {item?.title}
                 </p>
 
