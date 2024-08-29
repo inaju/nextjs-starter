@@ -23,8 +23,6 @@ import { toast } from "../ui/use-toast"
 import { useRouter } from "next/router"
 import { ToastAction } from "../ui/toast"
 
-
-
 const Ask = ({ mutation }) => {
     const { data: session, ...rest } = useSession()
     const [showTextArea, setShowTextArea] = useState(false)
@@ -63,7 +61,8 @@ const Ask = ({ mutation }) => {
                 setShowTextArea(false)
             }
         }
-    }, [scrollDir, showTextArea])
+      
+    }, [scrollDir])   /* eslint-disable-line */ 
     const inputElement = useRef(null);
     useEffect(() => {
         inputElement.current?.focus();

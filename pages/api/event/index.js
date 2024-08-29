@@ -7,11 +7,10 @@ await connectMongoDB();
 
 export default async function handler(req, res) {
     try {
-        const { name, eventMode, description, time, date, meridem, imageUrl, eventId, likedByUsers, noOfAttendees, otherData } = req.body;
+        const { eventId, eventOrganizer, name, eventMode, eventCode, description, time, date, meridem, imageUrl, likedByUsers, noOfAttendees, otherData, ...rest } = req.body;
         switch (req.method) {
             case 'POST':
                 try {
-
                     const nextRequestMeta = (key) => req[Reflect.ownKeys(req).find(
                         (s) => String(s) === key
                     )];
@@ -24,30 +23,44 @@ export default async function handler(req, res) {
                     if (!date) return res.status(400).json({ message: "please add a date" });
                     if (!meridem) return res.status(400).json({ message: "please add a meridem" });
                     if (!description) return res.status(400).json({ message: "please add a description" });
-                    const generatedEventId = generateShortUUID(name)
-                    const qrCode = await returnQrCode(baseUrl, generatedEventId)
-                    const newEvent = new EventModel({
-                        qrcode: qrCode?.imageUrl,
-                        eventId: generatedEventId,
-                        name: name,
-                        eventMode: eventMode,
-                        description: description,
-                        time: time,
-                        date: date,
-                        meridem: meridem,
-                        imageUrl: imageUrl,
-                        likedByUsers: {},
-                        noOfAttendees: 0,
-                        otherData: {}
-                    });
-                    await newEvent.save();
-                    res.status(200).json({ message: "event generated", data: newEvent })
+                    if (!eventOrganizer) return res.status(400).json({ message: "eventOrganizer must be present" });
+                    if (eventOrganizer && description && meridem && date && time && eventMode && name && eventCode) {
+                        const generatedEventId = generateShortUUID(name).replace(/\s+/g, '')
+                        const qrCode = await returnQrCode(baseUrl, generatedEventId)
+                        const newEvent = new EventModel({
+                            qrcode: qrCode?.imageUrl,
+                            eventId: generatedEventId,
+                            name: name,
+                            eventMode: eventMode,
+                            description: description,
+                            eventOrganizer: eventOrganizer,
+                            eventCode: eventCode,
+                            time: time,
+                            date: date,
+                            meridem: meridem,
+                            imageUrl: imageUrl,
+                            likedByUsers: {},
+                            noOfAttendees: 0,
+                            otherData: {}
+                        });
+                        await newEvent.save();
+                        res.status(200).json({ message: "event generated", data: newEvent })
+                    }
+
                 } catch (e) {
-                    console.log(e, "createEvent error")
+                    if (e.code == "11000") {
+                        console.error(e.message, "/api/event post event error")
                         res.status(400).json({
-                            message: `there was an error creating event`,
+                            message: `Please choose another name`,
                             error: e
                         })
+                    } else {
+                        console.error(e.message, "/api/event post event error")
+                        res.status(400).json({
+                            message: `There was an error`,
+                            error: e
+                        })
+                    }
                 }
 
             case 'GET':
@@ -56,6 +69,8 @@ export default async function handler(req, res) {
                         const event = await EventModel.findOne({
                             eventId: eventId
                         }).sort({ createdAt: -1 });
+                        console.log(event?.eventOrganizer,'dfkj event')
+
                         res.status(200).json({ data: event })
                     } else {
                         const event = await EventModel.find({}).sort({ createdAt: -1 });
@@ -63,11 +78,12 @@ export default async function handler(req, res) {
 
                     }
                 } catch (e) {
-                    console.log(e)
+                    console.error(e.message, "/api/event get event error")
+
                 }
         }
     } catch (err) {
-        console.log(err?.errorResponse, 'err?.errorResponse')
+        console.error(err?.errorResponse, 'err?.errorResponse')
         res.status(400).json({
             message: `Please choose another event name apart from ` + err?.errorResponse?.keyValue.name,
             error: err?.errorResponse?.errmsg
@@ -77,7 +93,6 @@ export default async function handler(req, res) {
 
 
 const returnQrCode = async (baseurl, uuid) => {
-    console.log(baseurl, 'baseurl')
     const url = baseurl + "/event/" + uuid;
     const response = await axios.post(`${baseurl}/api/upload-image`, {
         base64String: await generateQR(url)

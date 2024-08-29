@@ -27,7 +27,6 @@ export const useHandleEvent = () => {
                 })
                 queryClient.invalidateQueries({ queryKey: ['event'] })
                 setSingleResponse(rest?.data)
-                console.log(rest?.data?.eventId,'rest?.data?.eventId')
                 router.push("/event/" + rest?.data?.eventId)
                 return rest?.data;
             }

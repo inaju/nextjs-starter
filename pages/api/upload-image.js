@@ -17,7 +17,7 @@ export default async function handler(req, res) {
             )
         })
     } catch (err) {
-        console.log(err, 'this is the error')
+        console.error(err, 'this is the error')
         throw new Error(err);
     }
 }
@@ -28,7 +28,7 @@ const postImage = async (formData) => {
         const response = await axios.post(`https://api.imgbb.com/1/upload?key=${process.env.NEXT_IMGBB_API_KEY}`, formData)
         return response?.data?.data?.url;
     } catch (err) {
-        console.log(err, 'this is the error')
+        console.error(err, 'this is the error')
         // throw new Error(err);
     }
 }

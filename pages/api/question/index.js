@@ -16,6 +16,8 @@ export default async function handler(req, res) {
                     await newQuestion.save();
                     res.status(200).json({ message: "saved", data: newQuestion })
                 } catch (error) {
+                    console.error(error.message, `${req.method} ${req?.url} error`)
+
                     res.status(500).send(error.message);
                 }
             case 'GET':
@@ -24,23 +26,30 @@ export default async function handler(req, res) {
                     let response = []
                     await genericTryCatch(getCorrectQuestionResponse(question, response))
                     res.status(200).json({ data: response })
-                } catch (e) {
-                    console.log(e)
+                } catch (error) {
+                    console.error(error.message, `${req.method} ${req?.url} error`)
                 }
         }
-    } catch (err) {
-        console.log(err, 'error')
+    } catch (error) {
+    console.error(error.message, `${req.method} ${req?.url} error`)
+
     }
 }
 
 const getCorrectQuestionResponse = async (question, response) => {
-    for (let index = 0; index < question?.length; index++) {
-        const element = question[index];
-        let newItem = element?._doc;
-        if (!newItem?.userId) return null;
-        const author = await users.findOne({ _id: new ObjectId(newItem?.userId) });
-        newItem.author = author
-        response.push({ ...newItem })
+    try{
+
+        for (let index = 0; index < question?.length; index++) {
+            const element = question[index];
+            let newItem = element?._doc;
+            if (!newItem?.userId) return null;
+            const author = await users.findOne({ _id: new ObjectId(newItem?.userId) });
+            newItem.author = author
+            response.push({ ...newItem })
+        }
+    }catch(error){
+        console.error(error ,`getCorrectQuestionResponse error`)
+
     }
 }
 

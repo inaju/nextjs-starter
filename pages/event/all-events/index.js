@@ -32,8 +32,6 @@ export const EventsLayout = () => {
         return formattedDate;
     }
 
-    console.log(isLoading, 'isLoading')
-
     return (
         <Visible when={!isLoading} otherwise={<LoaderBlock />}>
             <Visible when={response?.length > 1} otherwise={<p>No Events Created, Please Create and event</p>}>

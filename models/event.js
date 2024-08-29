@@ -4,6 +4,10 @@ const eventSchema = new Schema(
   {
     name: { type: String, unique: true, dropDups: true, },
     eventMode: { type: String, },
+    eventCode: { type: String, },
+    eventId: { type: String, },
+    eventOrganizer: { type: String, },
+    userId: { type: String, },
     description: { type: String, },
     time: { type: String, },
     date: { type: String, },
@@ -11,7 +15,6 @@ const eventSchema = new Schema(
     imageUrl: { type: String, },
     url: { type: String, },
     qrcode: { type: String, },
-    eventId: { type: String, },
     likedByUsers: { type: Array, },
     noOfAttendees: { type: Number, },
     otherData: { type: Array, },
@@ -22,14 +25,3 @@ const eventSchema = new Schema(
 );
 
 export const EventModel = mongoose.models.EventModel || mongoose.model("EventModel", eventSchema);
-
-// {
-//     "name": "Stripedc conf",
-//     "eventMode": "in-person",
-//     "date": "2024-08-28T23:00:00.000Z",
-//     "description": "df",
-//     "time": "11:00",
-//     "meridem": "PM",
-//     "uimage": {},
-//     "imageUrl": "https://i.ibb.co/WGLbp90/9d456c890f5b.png"
-// }

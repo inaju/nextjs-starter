@@ -1,4 +1,3 @@
-import AuthProvider from '@/components/block/auth-provider';
 import ErrorBoundary from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
 import '@/styles/globals.css';
@@ -12,6 +11,7 @@ import { SessionProvider } from 'next-auth/react';
 const queryClient = new QueryClient()
 
 export default function App({ Component, pageProps: { session, ...pageProps } }) {
+
   return <ErrorBoundary>
     <SessionProvider session={session}>
       <QueryClientProvider client={queryClient}>

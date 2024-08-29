@@ -8,29 +8,30 @@ import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { toast } from "@/components/ui/use-toast"
 
 import {
   SelectGroup,
   SelectItem
 } from "@/components/ui/select"
+import { useHandleEvent } from "@/hooks/useHandleEvent"
+import { generateEventCode } from "@/lib/utils"
+import axios from "axios"
 import { LocateFixed, VideoIcon } from "lucide-react"
+import { useSession } from "next-auth/react"
+import { useRouter } from "next/router"
 import { useState } from "react"
+import { Switch } from "../ui/switch"
 import { Textarea } from "../ui/textarea"
 import { DatePickerWithPresets } from "./date-picker"
 import FormSelect from "./form-select"
 import UploadAndDisplayImage from "./upload-image"
-import axios from "axios"
-import { useMutation } from "@tanstack/react-query"
-import { postEvent } from "@/services"
-import { useHandleEvent } from "@/hooks/useHandleEvent"
-import { useRouter } from "next/router"
 
 const MAX_FILE_SIZE = 5000000;
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
@@ -49,16 +50,19 @@ const FormSchema = z.object({
     message: "description is required",
   }),
   image: z
-    .any(),
+    .any().optional(),
   time: z.string().min(2, {
     message: "time is required",
-  }),
+  }).optional(),
   meridem: z.string().min(2, {
     message: "meridem must be at least 2 characters.",
-  }),
+  }).optional(),
+  setEventCode: z.boolean().default(false).optional(),
+
 })
 
 export function CreateEventForm({ onOpenChange }) {
+  const { data: session, ...rest } = useSession()
   const [selectedImage, setSelectedImage] = useState(null);
   const {
     error, data, singleResponse, mutation, isLoading
@@ -83,21 +87,28 @@ export function CreateEventForm({ onOpenChange }) {
       newData.imageUrl = imageUrl
       mutation.mutate(newData)
     } else {
-
+      mutation.mutate(newData)
     }
+    setIsButtonClicked(false)
   }
-
 
   async function onSubmit(data) {
     setIsButtonClicked(true)
     let newData = { ...data }
     newData.uimage = selectedImage
+    newData.eventOrganizer = session?.user?.id;
+    newData.userId = session.user.id;
+    const code = generateEventCode()
+
+    if (code.length && data.setEventCode) {
+      newData.eventCode = code
+    } else if (!code.length && data.setEventCode) {
+      newData.eventCode = '0123'
+    }
     await handleSubmit(newData)
-    if (!isLoading) {
+    if (!mutation.isPending && mutation.status==="success") {
       onOpenChange(false)
     }
-    setIsButtonClicked(false)
-
   };
 
   const timeValue = [{
@@ -113,8 +124,8 @@ export function CreateEventForm({ onOpenChange }) {
     value: "PM",
   },]
 
-  let base64String = ""
   async function imageUploaded(file) {
+    let base64String = ""
     try {
 
       return new Promise((resolve, reject) => {
@@ -129,7 +140,7 @@ export function CreateEventForm({ onOpenChange }) {
         reader.readAsDataURL(file);
       })
     } catch (err) {
-      console.log("Error Converting image to base 64", err)
+      console.error("Error Converting image to base 64", err)
     }
   }
 
@@ -138,7 +149,7 @@ export function CreateEventForm({ onOpenChange }) {
       const response = await axios.post(`https://api.imgbb.com/1/upload?key=${process.env.NEXT_IMGBB_API_KEY}`, formData)
       return response?.data?.data?.url;
     } catch (err) {
-      console.log(err, 'error uploading image to imgbb')
+      console.error(err, 'error uploading image to imgbb')
       throw new Error(err);
     }
   }
@@ -235,7 +246,7 @@ export function CreateEventForm({ onOpenChange }) {
               <FormItem>
                 <FormLabel>Time</FormLabel>
                 <FormControl>
-                  <FormSelect field={field} placeholder={"00:00"} selectGroup={<SelectGroup>
+                  <FormSelect field={field} placeholder={"Enter a value"} selectGroup={<SelectGroup>
                     {timeValue?.map((item) => (
                       <SelectItem value={item?.value} key={item?.value} >
                         <div className="flex items-center flex-row gap-2">
@@ -256,7 +267,7 @@ export function CreateEventForm({ onOpenChange }) {
               <FormItem>
                 <FormLabel>AM/PM</FormLabel>
                 <FormControl>
-                  <FormSelect field={field} placeholder={"AM"} selectGroup={<SelectGroup>
+                  <FormSelect field={field} placeholder={""} selectGroup={<SelectGroup>
                     {meridem?.map((item) => (
                       <SelectItem value={item?.value} key={item?.value} >
                         <div className="flex items-center flex-row gap-2">
@@ -271,6 +282,28 @@ export function CreateEventForm({ onOpenChange }) {
             )}
           />
         </div>
+        <FormField
+          control={form.control}
+          name="setEventCode"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+              <div className="space-y-0.5">
+                <FormLabel className="text-base">
+                  Generate Event Code
+                </FormLabel>
+                <FormDescription>
+                  Turn this feature on to ensure that attendees enter a code before signing into an event to ensure that they are really present for that event.
+                </FormDescription>
+              </div>
+              <FormControl>
+                <Switch
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
         <Button disabled={isButtonClicked} type="submit">
           {isButtonClicked ? "loading..." : "Create"}
         </Button>

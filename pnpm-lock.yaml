@@ -155,6 +155,9 @@ importers:
       pino:
         specifier: ^9.3.2
         version: 9.3.2
+      pino-http:
+        specifier: ^10.2.0
+        version: 10.2.0
       pino-pretty:
         specifier: ^11.2.2
         version: 11.2.2
@@ -2760,6 +2763,9 @@ packages:
   pino-abstract-transport@1.2.0:
     resolution: {integrity: sha512-Guhh8EZfPCfH+PMXAb6rKOjGQEoy0xlAIn+irODG5kgfYV+BQ0rGYYWTIel3P5mmyXqkYkPmdIkywsn6QKUR1Q==}
 
+  pino-http@10.2.0:
+    resolution: {integrity: sha512-am03BxnV3Ckx68OkbH0iZs3indsrH78wncQ6w1w51KroIbvJZNImBKX2X1wjdY8lSyaJ0UrX/dnO2DY3cTeCRw==}
+
   pino-pretty@11.2.2:
     resolution: {integrity: sha512-2FnyGir8nAJAqD3srROdrF1J5BIcMT4nwj7hHSc60El6Uxlym00UbCCd8pYIterstVBFlMyF1yFV8XdGIPbj4A==}
     hasBin: true
@@ -2842,6 +2848,9 @@ packages:
 
   pretty-format@3.8.0:
     resolution: {integrity: sha512-WuxUnVtlWL1OfZFQFuqvnvs6MiAGk9UNsBostyBOB0Is9wb5uRESevA6rnl/rkksXaGX3GzZhPup5d6Vp1nFew==}
+
+  process-warning@3.0.0:
+    resolution: {integrity: sha512-mqn0kFRl0EoqhnL0GQ0veqFHyIN1yig9RHh/InzORTUiZHFRAur+aMtRkELNwGs9aNwKS6tg/An4NYBPGwvtzQ==}
 
   process-warning@4.0.0:
     resolution: {integrity: sha512-/MyYDxttz7DfGMMHiysAsFE4qF+pQYAA8ziO/3NcRVrQ5fSk+Mns4QZA/oRPFzvcqNoVJXQNWNAsdwBXLUkQKw==}
@@ -5927,6 +5936,13 @@ snapshots:
       readable-stream: 4.5.2
       split2: 4.2.0
 
+  pino-http@10.2.0:
+    dependencies:
+      get-caller-file: 2.0.5
+      pino: 9.3.2
+      pino-std-serializers: 7.0.0
+      process-warning: 3.0.0
+
   pino-pretty@11.2.2:
     dependencies:
       colorette: 2.0.20
@@ -6019,6 +6035,8 @@ snapshots:
   prelude-ls@1.2.1: {}
 
   pretty-format@3.8.0: {}
+
+  process-warning@3.0.0: {}
 
   process-warning@4.0.0: {}
 

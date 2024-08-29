@@ -21,7 +21,6 @@ export const useHandleQuestion=()=>{
     const mutation = useMutation({
       mutationFn: postTodos,
       onError: (error, variables, context) => {
-        console.log(error?.message, 'dataaa')
         toast({
           variant: "destructive",
           title: "Uh oh! Something went wrong.",

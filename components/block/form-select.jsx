@@ -14,7 +14,7 @@ const FormSelect = ({ field, selectGroup, placeholder }) => {
         <div>
             <Select onValueChange={field.onChange} defaultValue={field.value} {...field} >
                 <SelectTrigger className="w-full">
-                    <SelectValue placeholder={placeholder} />
+                    <SelectValue placeholder={placeholder}  />
                 </SelectTrigger>
                 <SelectContent>
                     {selectGroup}

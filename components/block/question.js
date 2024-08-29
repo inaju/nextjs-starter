@@ -25,7 +25,7 @@ const Question = ({ item, likeQuestionMutation }) => {
                 userId: userId,
             })
         } catch (err) {
-            console.log(err, 'here is it')
+            console.error(err, 'handleLikeAction here is it')
         }
     }
     const isGreaterThanZero = likes?.length > 0

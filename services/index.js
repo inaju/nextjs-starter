@@ -45,12 +45,10 @@ const postTodos = async (data) => {
 const getSingleEvent = async (data) => {
     try {
         if (data?.eventId) {
-            console.log(data?.eventId, 'eveeeee')
             const response = await axios
                 .post(`/api/event/${data?.eventId}`, {
                     headers: axiosheaders,
                 })
-                console.log(response,'response')
             return response?.data;
         }
     } catch (err) {
