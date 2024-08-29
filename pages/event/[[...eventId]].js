@@ -63,13 +63,13 @@ function EventPage() {
             description: "Feature Coming Soon",
         } : {
             title: "Yaay",
-            description: `See you at ${singleResponse?.name}`,
+            description: `See you at ${singleResponse?.data?.name}`,
         })
         setisAttendingEvent(!isAttendingEvent)
     }
     return (
         <MainLayout>
-            <Visible when={!_.isEmpty(singleResponse).data} otherwise={<LoaderBlock />}>
+            <Visible when={!_.isEmpty(singleResponse?.data)} otherwise={<LoaderBlock />}>
                 <div>
                     <div className="flex flex-col gap-2 mb-4 " >
                         <CustomBreadcrumbs pathname={router?.asPath} label={`${singleResponse?.data?.name} Event Page`} />
