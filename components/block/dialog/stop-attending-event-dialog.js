@@ -71,7 +71,7 @@ const StopAttendingEventDialog = ({ ...props }) => {
                 <div
                     className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >Do you want to stop attending this event?</div>
-                <div className="text-sm text-muted-foreground">You'll have to enter the code again to attend.</div>
+                <div className="text-sm text-muted-foreground">You will have to enter the code again to attend.</div>
 
                 <div className="flex gap-2 mt-4">
                     <DialogFooter className="mt-4">
