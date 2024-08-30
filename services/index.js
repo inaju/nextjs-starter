@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const axiosheaders = {
+export const axiosheaders = {
     'Content-Type': 'application/json',
     Accept: 'application/json',
 }
@@ -78,11 +78,25 @@ const postEvent = async (data) => {
         return err;
     }
 }
+const attendEvent = async (data) => {
+    try {
+        const response = await axios
+            .put('/api/event/attend-event', data,
+                {
+                    headers: axiosheaders,
+                })
+        return response?.data
+    } catch (err) {
+        return err;
+    }
+}
 
 export {
     getTodos,
     likeTodo,
     postTodos,
     postEvent,
-    getEvent, getSingleEvent
+    getEvent, 
+    getSingleEvent, 
+    attendEvent
 };

@@ -17,6 +17,7 @@ import Visible from './visible'
 import { PiIcon } from 'lucide-react'
 import { PianoIcon } from 'lucide-react'
 import { Plus } from 'lucide-react'
+import { CalendarRange } from 'lucide-react'
 
 
 const Header = () => {
@@ -28,7 +29,7 @@ const Header = () => {
             <Visible when={session}>
                 <div className='flex gap-2 items-start '>
                     <Button variant="outline" className='space-x-2' onClick={() => router.push('/event/all-events')}>
-                        <PianoIcon size={17}  />
+                        <CalendarRange size={17}  />
                         <div className='hidden md:block'>
                             Events
                         </div>

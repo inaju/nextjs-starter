@@ -23,6 +23,21 @@ export default async function handler(req, res) {
 }
 
 
+let config = (fileName, data) => {
+    return ({
+        "method": 'put',
+        "url": `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com/${process.env.R2_BUCKET}/` + fileName,
+        "headers": {
+            'x-amz-content-sha256': 'UNSIGNED-PAYLOAD',
+            'Content-Type': 'text/plain',
+            'AccessKey': process.env.R2_ACCESS_KEY,
+            'SecretKey': process.env.R2_SECRET_KEY
+        },
+        "data": data
+    });
+}
+
+
 const postImage = async (formData) => {
     try {
         const response = await axios.post(`https://api.imgbb.com/1/upload?key=${process.env.NEXT_IMGBB_API_KEY}`, formData)
@@ -32,3 +47,14 @@ const postImage = async (formData) => {
         // throw new Error(err);
     }
 }
+// export const postImage = async (fileName, data) => {
+//     console.log(config(fileName, data),'HGJK')
+//     try {
+//         const response = await axios.put(config(fileName, data))
+//         console.log(response,'dfkj response image')
+//         return response?.data?.data?.url;
+//     } catch (err) {
+//         console.error(err, 'this is the error')
+//         // throw new Error(err);
+//     }
+// }

@@ -19,13 +19,17 @@ import { useRouter } from "next/router";
 import { memo, useEffect, useState } from "react";
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { HomeLayout } from "..";
+import NextSeoComponent from "@/components/next-seo-component";
+import useGetLocation from "@/hooks/useGetLocation";
+import { handleDownload } from "@/lib/utils";
+import { BsPersonSquare } from "react-icons/bs";
+import { FaCode } from "react-icons/fa6";
 
 function EventPage() {
     const params = useParams();
     const router = useRouter();
     const eventId = params?.eventId[0]
-    const [location, setLocation] = useState()
-    const [isAttendingEvent, setisAttendingEvent] = useState(false)
+    const { location } = useGetLocation()
     const { getSingleEventFunc, singleResponse } = useHandleEvent()
     useEffect(() => {
         if (eventId) {
@@ -34,54 +38,51 @@ function EventPage() {
             })
         }
     }, [eventId])
-    useEffect(() => {
-        if (typeof window !== undefined) {
-            setLocation(window?.location)
-        }
-    }, [typeof window])
+
     const date = dayjs(singleResponse?.date);
     const formattedDate = date.format("MMM D, YYYY");
-    const handleDownload = (fileUrl, fileName) => {
-        fetch(fileUrl)
-            .then(response => response.blob())
-            .then(blob => {
-                const url = window.URL.createObjectURL(new Blob([blob]));
-                const link = document.createElement('a');
-                link.href = url;
-                link.setAttribute('download', fileName + ".png");
-                document.body.appendChild(link);
-                link.click();
-                link.parentNode.removeChild(link);
-                window.URL.revokeObjectURL(url);
-            })
-            .catch(error => console.error('Error downloading the file:', error));
-    };
 
-    const handleAttendEventFunc = () => {
-        toast(isAttendingEvent ? {
-            title: "Opps!",
-            description: "Feature Coming Soon",
-        } : {
-            title: "Yaay",
-            description: `See you at ${singleResponse?.data?.name}`,
-        })
-        setisAttendingEvent(!isAttendingEvent)
-    }
     return (
         <MainLayout>
+            <NextSeoComponent config={generateSeoConfig({
+                title: singleResponse?.data?.name?.toUpperCase(),
+                description: singleResponse?.data?.description,
+                url: location,
+                image: singleResponse?.data?.imageUrl
+            })} />
             <Visible when={!_.isEmpty(singleResponse?.data)} otherwise={<LoaderBlock />}>
                 <div>
-                    <div className="flex flex-col gap-2 mb-4 " >
+                    <div className="flex flex-col gap-2 mt-4  mb-8" >
                         <CustomBreadcrumbs pathname={router?.asPath} label={`${singleResponse?.data?.name} Event Page`} />
+                    </div>
+                    <div className="mb-4 flex flex-row border p-4 items-center justify-between gap-y-4 rounded-lg shadow-[10px] bg-white ">
+                        <div className="flex gap-2 items-center border-1  rounded-lg w-fit mt-2">
+                            <div className="flex gap-2 ">
+                                <Image src={singleResponse?.eventOrganizer?.image} alt="event organizer" height={20} width={25} className="rounded-full border border-1 border-slate-600" />
+                                <div className="text-muted-foreground ">
+                                    {singleResponse?.eventOrganizer?.name}
+                                </div>
+                            </div>
+                        </div>
+                        <div className="flex gap-2 items-center ">
+                            <div className="text-muted-foreground">
+                                Code
+                            </div>
+                            <div className="text-md font-semibold text-slate-600">
+                                {singleResponse?.data?.eventCode}
+                            </div>
+                        </div>
                     </div>
                     <div className="h-[350px] w-full lg:h-[600px] relative rounded-xl ">
                         <Image src={singleResponse?.data?.imageUrl} alt="event image" layout="fill" // required
                             objectFit="cover" // change to suit your needs
-                            className="rounded-xl"
+                            className=" rounded-lg shadow-sm"
                         />
                     </div>
-                    <div>
-                        <div className="flex flex-col mt-6">
+
+                    <div className="flex flex-col gap-4 justify-between mt-6">
+                        <div>
+
                             <div className="h-[2.1875rem] w-[2.1875rem]  relative ">
                                 <Image src={"https://img.freepik.com/free-vector/calendar-with-star_78370-7191.jpg"} alt="event image" layout="fill" // required
                                     objectFit="cover"
@@ -91,38 +92,24 @@ function EventPage() {
                                 {formattedDate} {singleResponse?.data?.time}
                                 {singleResponse?.data?.meridem}
                             </div>
+                        </div>
+                        <div>
+
                             <div className="text-2xl font-bold text-slate-800 mt-4">
                                 {singleResponse?.data?.name?.toUpperCase()}
                             </div>
                             <div className="text-md font-normal text-muted-foreground">
                                 {singleResponse?.data?.eventMode}
                             </div>
-                            <div className="flex gap-2 mt-6">
-                                <div className="text-muted-foreground">
-                                    Code:
-                                </div>
-                                <div className="text-md font-semibold text-slate-600">
-
-                                    {singleResponse?.data?.eventCode}
-                                </div>
-                            </div>
                         </div>
+
                     </div>
                     <Separator className="my-4" />
                     <div className="flex gap-2 flex-wrap">
-                        <AttendEvent event={singleResponse?.data} eventOrganizer={singleResponse?.eventOrganizer} />
-                        <Button className="flex gap-3" variant={!isAttendingEvent ? "outline" : "default"} onClick={() => handleAttendEventFunc()}>
-                            {!isAttendingEvent ?
-                                <>
-                                    <StarsIcon size={15} />
-                                    Attend Event
-                                </> :
-                                <>
-                                    <Users size={15} />
-                                    Going
-                                </>
-                            }
-                        </Button>
+                        <AttendEvent
+                            event={singleResponse?.data}
+                            eventOrganizer={singleResponse?.eventOrganizer}
+                        />
                         <Button className="flex gap-3" variant="outline" onClick={() => handleDownload(singleResponse?.data?.qrcode, singleResponse?.data?.name)}>
                             <Download size={15} />
                             QR Code
@@ -145,7 +132,7 @@ function EventPage() {
                     </div>
                     <Separator className="my-4" />
                     <Visible when={singleResponse?.data?.description}>
-                        <div className="whitespace-pre-line text-slate-500">
+                        <div className="whitespace-pre-line text-slate-500 text-[13px]">
                             <SeeMore text={singleResponse?.data?.description} length="150" />
                         </div>
                     </Visible>
@@ -163,3 +150,30 @@ function EventPage() {
 
 
 export default memo(EventPage)
+
+
+const generateSeoConfig = ({ title, description, url, image }) => {
+    return {
+        title: title,
+        description: description,
+        openGraph: {
+            url: url,
+            title: title,
+            description: description,
+            images: [
+                {
+                    url: image,
+                    width: 800,
+                    height: 600,
+                    alt: 'Og Image Alt',
+                    type: 'image/jpeg',
+                },],
+
+        },
+        twitter: {
+            handle: '@mitchelinaju',
+            site: 'www.mitchelinaju.com',
+            cardType: 'summary_large_image',
+        }
+    }
+}

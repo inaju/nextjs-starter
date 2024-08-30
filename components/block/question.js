@@ -5,6 +5,8 @@ import React, { useState } from 'react'
 import relativeTime from 'dayjs/plugin/relativeTime';
 import dayjs from 'dayjs';
 import Image from 'next/image';
+import { FcLike } from "react-icons/fc";
+import Visible from './visible';
 
 // Extend dayjs with the relativeTime plugin
 dayjs.extend(relativeTime);
@@ -56,7 +58,14 @@ const Question = ({ item, likeQuestionMutation }) => {
             </div>
 
             <div onClick={() => handleLikeAction()} className='flex gap-1 items-center'>
-                <Heart size={25} color={isLiked ? `#ff0000` : `#000000`} strokeWidth={isLiked ? 2 : 1.75} />
+                <Visible when={isLiked} otherwise={
+
+                <Heart size={25} color={  `#000000`} strokeWidth={2} />
+
+                }>
+                <FcLike size={25} />
+
+                </Visible>
                 <span className='text-slate-600 text-sm'>
                     {isGreaterThanZero && isLiked ? likes?.length : null}
                 </span>

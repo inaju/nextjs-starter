@@ -17,6 +17,7 @@ const eventSchema = new Schema(
     qrcode: { type: String, },
     likedByUsers: { type: Array, },
     noOfAttendees: { type: Number, },
+    attendees: { type: Array, },
     otherData: { type: Array, },
   },
   {

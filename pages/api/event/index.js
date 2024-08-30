@@ -1,9 +1,7 @@
-import connectMongoDB from "@/lib/utils";
 import { EventModel } from "@/models/event";
 import axios from "axios";
 import { generateQR } from "../utils/create-qr-code";
 
-await connectMongoDB();
 
 export default async function handler(req, res) {
     try {
@@ -21,10 +19,9 @@ export default async function handler(req, res) {
                     if (!eventMode) return res.status(400).json({ message: "please add a eventMode" });
                     if (!time) return res.status(400).json({ message: "please add a time" });
                     if (!date) return res.status(400).json({ message: "please add a date" });
-                    if (!meridem) return res.status(400).json({ message: "please add a meridem" });
                     if (!description) return res.status(400).json({ message: "please add a description" });
                     if (!eventOrganizer) return res.status(400).json({ message: "eventOrganizer must be present" });
-                    if (eventOrganizer && description && meridem && date && time && eventMode && name && eventCode) {
+                    if (eventOrganizer && description && date && time && eventMode && name && eventCode) {
                         const generatedEventId = generateShortUUID(name).replace(/\s+/g, '')
                         const qrCode = await returnQrCode(baseUrl, generatedEventId)
                         const newEvent = new EventModel({

@@ -1,8 +1,7 @@
-import connectMongoDB, { genericTryCatch } from "@/lib/utils";
+import { genericTryCatch } from "@/lib/utils";
 import { QuestionModel } from "@/models/question";
 import { users } from "@/models/users";
 import { ObjectId } from "mongodb";
-const mongo = await connectMongoDB();
 
 export default async function handler(req, res) {
     try {
@@ -14,7 +13,7 @@ export default async function handler(req, res) {
                 try {
                     const newQuestion = new QuestionModel({ title: title, like: 0, userId: userId });
                     await newQuestion.save();
-                    res.status(200).json({ message: "saved", data: newQuestion })
+                    res.status(200).json({ status: 200, message: "saved", data: newQuestion })
                 } catch (error) {
                     console.error(error.message, `${req.method} ${req?.url} error`)
 
@@ -31,13 +30,13 @@ export default async function handler(req, res) {
                 }
         }
     } catch (error) {
-    console.error(error.message, `${req.method} ${req?.url} error`)
+        console.error(error.message, `${req.method} ${req?.url} error`)
 
     }
 }
 
 const getCorrectQuestionResponse = async (question, response) => {
-    try{
+    try {
 
         for (let index = 0; index < question?.length; index++) {
             const element = question[index];
@@ -47,8 +46,8 @@ const getCorrectQuestionResponse = async (question, response) => {
             newItem.author = author
             response.push({ ...newItem })
         }
-    }catch(error){
-        console.error(error ,`getCorrectQuestionResponse error`)
+    } catch (error) {
+        console.error(error, `getCorrectQuestionResponse error`)
 
     }
 }

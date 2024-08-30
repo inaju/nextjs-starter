@@ -34,10 +34,8 @@ export const HomeLayout = () => {
   return (
     <Visible when={!isLoading} otherwise={<LoaderBlock />}>
       <div className="flex flex-col gap-2">
-        <div className="  p-1 mb-10 sticky top-10 z-10 ask-block">
-          <div className=" ">
+        <div className=" my-10 sticky top-14 z-10 ask-block ">
             <Ask mutation={mutation} />
-          </div>
         </div>
         <Visible when={response?.length} otherwise={<p>No questions asked, Please ask your question</p>}>
           <div className="flex flex-col gap-2">

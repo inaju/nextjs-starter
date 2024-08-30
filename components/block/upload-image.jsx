@@ -14,7 +14,7 @@ const UploadAndDisplayImage = ({ field, selectedImage, setSelectedImage }) => {
       {selectedImage && (
         <div>
           <img
-            className="w-full h-[280px]"
+            className="w-full h-[280px] object-contain"
             alt="not found"
             src={URL.createObjectURL(selectedImage)}
           />

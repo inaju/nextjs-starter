@@ -26,12 +26,13 @@ import axios from "axios"
 import { LocateFixed, VideoIcon } from "lucide-react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/router"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Switch } from "../ui/switch"
 import { Textarea } from "../ui/textarea"
 import { DatePickerWithPresets } from "./date-picker"
 import FormSelect from "./form-select"
 import UploadAndDisplayImage from "./upload-image"
+// import { postImage } from "@/pages/api/upload-image"
 
 const MAX_FILE_SIZE = 5000000;
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
@@ -50,7 +51,11 @@ const FormSchema = z.object({
     message: "description is required",
   }),
   image: z
-    .any().optional(),
+    .any().refine((file) => file?.size <= MAX_FILE_SIZE, `Max image size is 5MB.`)
+    .refine(
+      (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
+      "Only .jpg, .jpeg, .png and .webp formats are supported."
+    ).optional(),
   time: z.string().min(2, {
     message: "time is required",
   }).optional(),
@@ -78,6 +83,9 @@ export function CreateEventForm({ onOpenChange }) {
     },
   })
 
+  useEffect(() => {
+    closeDrawer();
+  }, [mutation])
   const handleSubmit = async (data) => {
     let imageUrl = "win"
     let newData = { ...data }
@@ -86,12 +94,19 @@ export function CreateEventForm({ onOpenChange }) {
       imageUrl = response
       newData.imageUrl = imageUrl
       mutation.mutate(newData)
+      closeDrawer();
     } else {
       mutation.mutate(newData)
+      closeDrawer();
     }
     setIsButtonClicked(false)
   }
 
+  const closeDrawer = () => {
+    if (!mutation.isPending && mutation.data?.status !== 400 && mutation.data != undefined) {
+      onOpenChange(false)
+    }
+  }
   async function onSubmit(data) {
     setIsButtonClicked(true)
     let newData = { ...data }
@@ -106,9 +121,7 @@ export function CreateEventForm({ onOpenChange }) {
       newData.eventCode = '0123'
     }
     await handleSubmit(newData)
-    if (!mutation.isPending && mutation.status==="success") {
-      onOpenChange(false)
-    }
+
   };
 
   const timeValue = [{
@@ -127,7 +140,6 @@ export function CreateEventForm({ onOpenChange }) {
   async function imageUploaded(file) {
     let base64String = ""
     try {
-
       return new Promise((resolve, reject) => {
         let reader = new FileReader();
         reader.onload = async function () {
@@ -135,7 +147,9 @@ export function CreateEventForm({ onOpenChange }) {
             .replace(/^.+,/, "");
           const formData = new FormData();
           formData.append('image', base64String?.toString());
+          // formData.append('fileName', file?.name);
           resolve(await postImage(formData))
+          // resolve(await postImage({ base64String: base64String }))
         }
         reader.readAsDataURL(file);
       })
@@ -145,8 +159,11 @@ export function CreateEventForm({ onOpenChange }) {
   }
 
   const postImage = async (formData) => {
+    console.log(formData, 'formData')
+
     try {
       const response = await axios.post(`https://api.imgbb.com/1/upload?key=${process.env.NEXT_IMGBB_API_KEY}`, formData)
+      console.log(response, 'hgjh response')
       return response?.data?.data?.url;
     } catch (err) {
       console.error(err, 'error uploading image to imgbb')
@@ -157,7 +174,7 @@ export function CreateEventForm({ onOpenChange }) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6 h-[400px]  overflow-y-scroll overflow-x-hidden pr-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6 h-[450px]  overflow-y-scroll overflow-x-hidden pr-4">
         <FormField
           control={form.control}
           name="image"
@@ -184,6 +201,55 @@ export function CreateEventForm({ onOpenChange }) {
             </FormItem>
           )}
         />
+        <div className="flex justify-between items-center gap-4">
+          <FormField
+            control={form.control}
+            name="date"
+            render={({ field }) => (
+              <FormItem className="flex flex-col mt-2 w-full">
+                <FormLabel>Event Date</FormLabel>
+                <FormControl>
+                  <DatePickerWithPresets field={field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="time"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Time</FormLabel>
+                <FormControl>
+                  <Input placeholder="00:01" type="time" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {/* <FormField
+            control={form.control}
+            name="meridem"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>AM/PM</FormLabel>
+                <FormControl>
+                  <FormSelect field={field} placeholder={""} selectGroup={<SelectGroup>
+                    {meridem?.map((item) => (
+                      <SelectItem value={item?.value} key={item?.value} >
+                        <div className="flex items-center flex-row gap-2">
+                          {item?.name}
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          /> */}
+        </div>
         <FormField
           control={form.control}
           name="eventMode"
@@ -225,63 +291,7 @@ export function CreateEventForm({ onOpenChange }) {
             </FormItem>
           )}
         />
-        <div className="flex justify-between items-center">
-          <FormField
-            control={form.control}
-            name="date"
-            render={({ field }) => (
-              <FormItem className="flex flex-col mt-2 ">
-                <FormLabel>Event Date</FormLabel>
-                <FormControl>
-                  <DatePickerWithPresets field={field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="time"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Time</FormLabel>
-                <FormControl>
-                  <FormSelect field={field} placeholder={"Enter a value"} selectGroup={<SelectGroup>
-                    {timeValue?.map((item) => (
-                      <SelectItem value={item?.value} key={item?.value} >
-                        <div className="flex items-center flex-row gap-2">
-                          {item?.name}
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="meridem"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>AM/PM</FormLabel>
-                <FormControl>
-                  <FormSelect field={field} placeholder={""} selectGroup={<SelectGroup>
-                    {meridem?.map((item) => (
-                      <SelectItem value={item?.value} key={item?.value} >
-                        <div className="flex items-center flex-row gap-2">
-                          {item?.name}
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+
         <FormField
           control={form.control}
           name="setEventCode"

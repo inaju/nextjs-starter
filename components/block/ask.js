@@ -52,7 +52,10 @@ const Ask = ({ mutation }) => {
             user: session?.user,
             userId: session?.user?.id,
         })
-        form?.reset()
+        if(mutation?.data?.status){
+            form?.reset();
+            setShowTextArea(false)
+        }
     }
 
     useEffect(() => {
@@ -68,7 +71,7 @@ const Ask = ({ mutation }) => {
         inputElement.current?.focus();
     }, []);
     return (
-        <div className="bg-inherit z-10 relative">
+        <div className="bg-inherit z-10 relative bg-white rounded-lg">
             <Visible when={showTextArea} otherwise={
                 <div onClick={() => setShowTextArea(true)} className=" flex justify-between items-center px-4 py-2 rounded-lg border hover:bg-slate-200 hover:text-primary cursor-pointer text-muted-foreground">
                     I have a question about...

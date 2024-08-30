@@ -7,7 +7,11 @@ const nextConfig = {
   },
   env: {
     NEXT_IMGBB_API_KEY: process.env.NEXT_IMGBB_API_KEY,
-    NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET
+    NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
+    R2_ACCOUNT_ID: process.env.R2_ACCOUNT_ID,
+    R2_ACCESS_KEY: process.env.R2_ACCESS_KEY,
+    R2_SECRET_KEY: process.env.R2_SECRET_KEY,
+    R2_BUCKET: process.env.R2_BUCKET,
   },
   transpilePackages: ["geist"],
   images: {

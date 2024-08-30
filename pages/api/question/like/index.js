@@ -1,6 +1,4 @@
-import connectMongoDB from "@/lib/utils";
 import { QuestionModel } from "@/models/question";
-await connectMongoDB();
 
 export default async function handler(req, res) {
     if (req.method === 'PUT') {

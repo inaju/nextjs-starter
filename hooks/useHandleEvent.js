@@ -1,6 +1,6 @@
 import { ToastAction } from "@/components/ui/toast";
 import { useToast } from "@/components/ui/use-toast";
-import { getEvent, getSingleEvent, getTodos, likeTodo, postEvent, postTodos } from "@/services";
+import { attendEvent, getEvent, getSingleEvent, getTodos, likeTodo, postEvent, postTodos } from "@/services";
 import {
     useMutation,
     useQuery,
@@ -15,7 +15,7 @@ export const useHandleEvent = () => {
     const { error, data, isLoading } = useQuery({ queryKey: ['event'], queryFn: getEvent })
     const [updatedResponse, setUpdatedResponse] = useState(data)
     const [singleResponse, setSingleResponse] = useState({})
-    const router=useRouter()
+    const router = useRouter()
     const mutation = useMutation({
         mutationFn: postEvent,
         onSuccess: ({ ...rest }) => {
@@ -55,10 +55,28 @@ export const useHandleEvent = () => {
             }
         },
     })
+    const attendEventFunc = useMutation({
+        mutationFn: (data) => attendEvent(data),
+        onSuccess: ({ ...rest }) => {
+            if (rest?.status == 200) {
+                queryClient.invalidateQueries({ queryKey: ['event'] })
+                
+                return rest
+            }
+            if (rest.response.status == 400) {
+                toast({
+                    variant: "destructive",
+                    title: "Uh oh!",
+                    description: rest?.response?.data?.message,
+                })
+            }
+        },
+    })
 
 
     return {
+        attendEventFunc,
         getSingleEventFunc, singleResponse,
-        error, data, updatedResponse, mutation,isLoading,
+        error, data, updatedResponse, mutation, isLoading,
     }
 }
