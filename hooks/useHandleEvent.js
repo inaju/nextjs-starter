@@ -19,6 +19,7 @@ export const useHandleEvent = () => {
     const mutation = useMutation({
         mutationFn: postEvent,
         onSuccess: ({ ...rest }) => {
+            console.log(rest,'restrest')
             if (rest?.data) {
                 setSingleResponse({})
                 toast({

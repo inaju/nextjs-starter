@@ -31,10 +31,10 @@ export const EventsLayout = () => {
         const formattedDate = date.format("MMM D, YYYY");
         return formattedDate;
     }
-
+    console.log(response, 'response')
     return (
         <Visible when={!isLoading} otherwise={<LoaderBlock />}>
-            <Visible when={response?.length > 1} otherwise={<p>No Events Created, Please Create and event</p>}>
+            <Visible when={response?.length > 0} otherwise={<p>No Events Created, Please Create and event</p>}>
                 <div
                     className="flex flex-row flex-wrap  flex-grow gap-4   rounded-lg  items-center justify-start">
                     {response?.map((item, index) =>

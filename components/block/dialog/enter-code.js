@@ -33,10 +33,10 @@ import { toast } from "@/components/ui/use-toast"
 
 const EnterCodeDialog = ({ ...props }) => {
     const { attendEventFunc } = useHandleEvent()
-    const { data: session, ...rest } = useSession()
+    const { data: session, status, ...rest } = useSession()
     const userId = session?.user?.id
     const [open, setOpen] = useState(false);
-    console.log(props ,'props?.event?.attendees?.includes(userId)')
+    const [openModalAgain, setOpenModalAgain] = useState(false);
     const FormSchema = z.object({
         code: z.string().min(4, {
             message: "event code must be at least 4 characters.",
@@ -65,7 +65,11 @@ const EnterCodeDialog = ({ ...props }) => {
     }
     useEffect(() => {
         closeDrawer();
-    }, [attendEventFunc])
+    }, [attendEventFunc]);
+
+    useEffect(() => {
+        if (openModalAgain && status === "authenticated") setOpen(true)
+    }, [status,openModalAgain])
 
     const closeDrawer = () => {
         if (!attendEventFunc.isPending
@@ -78,11 +82,54 @@ const EnterCodeDialog = ({ ...props }) => {
                 description: `See you at ${attendEventFunc.data.data?.name}`
             })
         }
+    };
+
+    const popupCenter = (url, title) => {
+        const dualScreenLeft = window.screenLeft ?? window.screenX;
+        const dualScreenTop = window.screenTop ?? window.screenY;
+
+        const width =
+            window.innerWidth ?? document.documentElement.clientWidth ?? screen.width;
+
+        const height =
+            window.innerHeight ??
+            document.documentElement.clientHeight ??
+            screen.height;
+
+        const systemZoom = width / window.screen.availWidth;
+
+        const left = (width - 500) / 2 / systemZoom + dualScreenLeft;
+        const top = (height - 550) / 2 / systemZoom + dualScreenTop;
+
+        const newWindow = window.open(
+            url,
+            title,
+            `width=${500 / systemZoom},height=${550 / systemZoom
+            },top=${top},left=${left}`
+        );
+
+        newWindow?.focus();
+    };
+
+    const handleAttendFunction = (e) => {
+        if (status === "unauthenticated") {
+            toast({
+                variant: "destructive",
+                title: "It seems you're not logged using the popup",
+                description: "please login",
+            });
+            e.preventDefault()
+            popupCenter("/google-signin", "Sample Sign In")
+            setOpenModalAgain(true)
+        } else if (status === "authenticated") {
+            setOpen(true)
+        }
     }
+
     return (
         <Dialog open={open} onOpenChange={() => handleOpenDialog()}>
             <DialogTrigger asChild>
-                <Button className="flex gap-3 border border-primary"
+                <Button onClick={(e) => handleAttendFunction(e)} className="flex gap-3 border border-primary"
                     variant={!props?.isAttendingEvent ? "outline" : "default"}
                 >
                     {!props?.isAttendingEvent ?

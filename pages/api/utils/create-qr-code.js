@@ -4,7 +4,7 @@ import QRCode from 'qrcode'
 export const generateQR = async text => {
   try {
     const qrCode=QRCode.toDataURL(text,{ version: 6 })
-    return await qrCode;
+    return qrCode;
   } catch (err) {
     console.error(err)
   }

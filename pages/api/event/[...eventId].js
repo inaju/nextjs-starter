@@ -1,11 +1,8 @@
 import { EventModel } from "@/models/event";
 import { users } from "@/models/users";
-import axios from "axios";
-import { generateQR } from "../utils/create-qr-code";
 
 
 export default async function handler(req, res) {
-    console.log(req.body, 'req.body eventCode')
     try {
         switch (req.method) {
             case 'POST':

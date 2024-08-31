@@ -6,6 +6,8 @@ const nextConfig = {
     instrumentationHook: true,
   },
   env: {
+    AWS_ACCESS_KEY: process.env.AWS_ACCESS_KEY,
+    AWS_SECRET_KEY: process.env.AWS_SECRET_KEY,
     NEXT_IMGBB_API_KEY: process.env.NEXT_IMGBB_API_KEY,
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
     R2_ACCOUNT_ID: process.env.R2_ACCOUNT_ID,
@@ -16,27 +18,7 @@ const nextConfig = {
   transpilePackages: ["geist"],
   images: {
     formats: ['image/avif', 'image/webp'],
-
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "lh3.googleusercontent.com",
-        port: "",
-        pathname: '/*/**',
-      },
-      {
-        protocol: "https",
-        hostname: "img.freepik.com",
-        port: "",
-        pathname: '/*/**',
-      },
-      {
-        protocol: "https",
-        hostname: "i.ibb.co",
-        port: "",
-        pathname: '/*/**',
-      },
-    ],
+    domains: ["komi-web.s3.us-east-2.amazonaws.com", "img.freepik.com", "i.ibb.co", "komi.c0ef8d154a5955ab7af6a8a756a2043f.r2.cloudflarestorage.com", "lh3.googleusercontent.com"],
   },
 }
 

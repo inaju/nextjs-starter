@@ -1,6 +1,7 @@
 import { EventModel } from "@/models/event";
 import axios from "axios";
 import { generateQR } from "../utils/create-qr-code";
+import { generateShortUUID } from "@/lib/utils";
 
 
 export default async function handler(req, res) {
@@ -15,6 +16,7 @@ export default async function handler(req, res) {
                     const host = nextRequestMeta("Symbol(kHeaders)").host
                     const protocol = nextRequestMeta("Symbol(NextInternalRequestMeta)")._protocol
                     const baseUrl = protocol + "://" + host
+                    console.log("creating event")
                     if (!name) return res.status(400).json({ message: "please add a name" });
                     if (!eventMode) return res.status(400).json({ message: "please add a eventMode" });
                     if (!time) return res.status(400).json({ message: "please add a time" });
@@ -59,6 +61,9 @@ export default async function handler(req, res) {
                         })
                     }
                 }
+                res.status(400).json({
+                    message: `lapse`,
+                })
 
             case 'GET':
                 try {
@@ -101,8 +106,4 @@ const returnQrCode = async (baseurl, uuid) => {
     }
     )
     return response?.data;
-}
-
-function generateShortUUID(name) {
-    return (Math.random().toString(36).substring(2, 6) + name.slice(0, 2))?.toUpperCase();
 }

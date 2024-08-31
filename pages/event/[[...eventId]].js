@@ -6,24 +6,22 @@ import MainLayout from "@/components/block/layout/main-layout";
 import LoaderBlock from "@/components/block/loader";
 import SeeMore from "@/components/block/see-more";
 import Visible from "@/components/block/visible";
+import NextSeoComponent from "@/components/next-seo-component";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "@/components/ui/use-toast";
+import useGetLocation from "@/hooks/useGetLocation";
 import { useHandleEvent } from "@/hooks/useHandleEvent";
+import { handleDownload } from "@/lib/utils";
 import dayjs from "dayjs";
 import _ from "lodash";
-import { Download, ShareIcon, StarsIcon, Users } from "lucide-react";
+import { Download, ShareIcon } from "lucide-react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/router";
-import { memo, useEffect, useState } from "react";
+import { memo, useEffect } from "react";
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { HomeLayout } from "..";
-import NextSeoComponent from "@/components/next-seo-component";
-import useGetLocation from "@/hooks/useGetLocation";
-import { handleDownload } from "@/lib/utils";
-import { BsPersonSquare } from "react-icons/bs";
-import { FaCode } from "react-icons/fa6";
 
 function EventPage() {
     const params = useParams();
@@ -74,6 +72,7 @@ function EventPage() {
                         </div>
                     </div>
                     <div className="h-[350px] w-full lg:h-[600px] relative rounded-xl ">
+                        {singleResponse?.data?.imageUrl}
                         <Image src={singleResponse?.data?.imageUrl} alt="event image" layout="fill" // required
                             objectFit="cover" // change to suit your needs
                             className=" rounded-lg shadow-sm"

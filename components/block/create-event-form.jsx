@@ -21,7 +21,7 @@ import {
   SelectItem
 } from "@/components/ui/select"
 import { useHandleEvent } from "@/hooks/useHandleEvent"
-import { generateEventCode } from "@/lib/utils"
+import { generateEventCode, generateShortUUID } from "@/lib/utils"
 import axios from "axios"
 import { LocateFixed, VideoIcon } from "lucide-react"
 import { useSession } from "next-auth/react"
@@ -33,6 +33,11 @@ import { DatePickerWithPresets } from "./date-picker"
 import FormSelect from "./form-select"
 import UploadAndDisplayImage from "./upload-image"
 // import { postImage } from "@/pages/api/upload-image"
+
+import AWS from "aws-sdk";
+import S3 from 'aws-sdk/clients/s3'; // Import only the S3 client
+
+
 
 const MAX_FILE_SIZE = 5000000;
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
@@ -90,10 +95,14 @@ export function CreateEventForm({ onOpenChange }) {
     let imageUrl = "win"
     let newData = { ...data }
     if (data?.uimage) {
-      const response = await imageUploaded(data?.uimage);
+      const file_extension = data?.uimage?.name?.split('.')[1]
+      const response = await uploadFile(data?.uimage, `${data.eventOrganizer}_${data.eventCode}_${generateShortUUID(data?.uimage?.name)}.${file_extension}`);
+      // const response = await imageUploaded(data?.uimage);
+      // const response = await handlePreSignedUrlSubmit(data?.uimage);
+      console.log(response, 'response')
       imageUrl = response
-      newData.imageUrl = imageUrl
-      mutation.mutate(newData)
+      newData.imageUrl = imageUrl,
+        mutation.mutate(newData)
       closeDrawer();
     } else {
       mutation.mutate(newData)
@@ -124,54 +133,36 @@ export function CreateEventForm({ onOpenChange }) {
 
   };
 
-  const timeValue = [{
-    name: "11:00",
-    value: "11:00",
-  }]
-  const meridem = [{
-    name: "AM",
-    value: "AM",
-  },
-  {
-    name: "PM",
-    value: "PM",
-  },]
 
-  async function imageUploaded(file) {
-    let base64String = ""
-    try {
-      return new Promise((resolve, reject) => {
-        let reader = new FileReader();
-        reader.onload = async function () {
-          base64String = reader.result.replace("data:", "")
-            .replace(/^.+,/, "");
-          const formData = new FormData();
-          formData.append('image', base64String?.toString());
-          // formData.append('fileName', file?.name);
-          resolve(await postImage(formData))
-          // resolve(await postImage({ base64String: base64String }))
-        }
-        reader.readAsDataURL(file);
-      })
-    } catch (err) {
-      console.error("Error Converting image to base 64", err)
-    }
-  }
-
-  const postImage = async (formData) => {
-    console.log(formData, 'formData')
+  const uploadFile = async (file, fileName) => {
+    const S3_BUCKET = "komi-web";
+    const REGION = "us-east-2";
+    AWS.config.update({
+      accessKeyId: process.env.AWS_ACCESS_KEY,
+      secretAccessKey: process.env.AWS_SECRET_KEY,
+    });
+    const s3 = new S3({
+      params: { Bucket: S3_BUCKET },
+      region: REGION,
+    });
+    const params = {
+      Bucket: S3_BUCKET,
+      Key: fileName,
+      Body: file,
+    };
 
     try {
-      const response = await axios.post(`https://api.imgbb.com/1/upload?key=${process.env.NEXT_IMGBB_API_KEY}`, formData)
-      console.log(response, 'hgjh response')
-      return response?.data?.data?.url;
-    } catch (err) {
-      console.error(err, 'error uploading image to imgbb')
-      throw new Error(err);
+      const upload = await s3.putObject(params).promise();
+      if (upload?.$response?.httpResponse.statusCode === 200) {
+        return "https://komi-web.s3.us-east-2.amazonaws.com/" + fileName
+      }
+      alert("File uploaded successfully.");
+
+    } catch (error) {
+      console.error(error);
     }
-  }
 
-
+  };
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6 h-[450px]  overflow-y-scroll overflow-x-hidden pr-4">
@@ -291,7 +282,6 @@ export function CreateEventForm({ onOpenChange }) {
             </FormItem>
           )}
         />
-
         <FormField
           control={form.control}
           name="setEventCode"
@@ -314,8 +304,8 @@ export function CreateEventForm({ onOpenChange }) {
             </FormItem>
           )}
         />
-        <Button disabled={isButtonClicked} type="submit">
-          {isButtonClicked ? "loading..." : "Create"}
+        <Button disabled={mutation.isPending} type="submit">
+          {mutation.isPending ? "loading..." : "Create"}
         </Button>
       </form>
     </Form>
