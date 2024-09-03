@@ -72,7 +72,6 @@ function EventPage() {
                         </div>
                     </div>
                     <div className="h-[350px] w-full lg:h-[600px] relative rounded-xl ">
-                        {singleResponse?.data?.imageUrl}
                         <Image src={singleResponse?.data?.imageUrl} alt="event image" layout="fill" // required
                             objectFit="cover" // change to suit your needs
                             className=" rounded-lg shadow-sm"

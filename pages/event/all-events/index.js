@@ -31,18 +31,17 @@ export const EventsLayout = () => {
         const formattedDate = date.format("MMM D, YYYY");
         return formattedDate;
     }
-    console.log(response, 'response')
     return (
         <Visible when={!isLoading} otherwise={<LoaderBlock />}>
-            <Visible when={response?.length > 0} otherwise={<p>No Events Created, Please Create and event</p>}>
+            <Visible when={response?.length > 0} otherwise={<p className="flex items-center justify-center flex-col gap-8 text-2xl my-auto mx-4">No Events Created, Please Create an event</p>}>
                 <div
-                    className="flex flex-row flex-wrap  flex-grow gap-4   rounded-lg  items-center justify-start">
+                    className="flex flex-row flex-wrap flex-grow gap-4  mt-10  rounded-lg  items-center justify-start">
                     {response?.map((item, index) =>
                         <div
                             key={item?.eventId}
                             onClick={() => router.push(`/event/${item?.eventId}`)}
                             className=" cursor-pointer  rounded-xl hover:bg-slate-100 bg-white " >
-                            <div className="w-[22rem] lg:w-[18.75rem] h-[20.25rem] relative cursor-pointer " key={index}>
+                            <div className="w-full lg:w-[18.75rem] h-[20.25rem] relative cursor-pointer " key={index}>
                                 <Image src={item?.imageUrl} alt="event image" layout="fill" // required
                                     objectFit="cover" // change to suit your needs
                                     className="rounded-xl"

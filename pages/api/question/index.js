@@ -27,6 +27,7 @@ export default async function handler(req, res) {
                     res.status(200).json({ data: response })
                 } catch (error) {
                     console.error(error.message, `${req.method} ${req?.url} error`)
+                    res.status(400).json({ error: error.message })
                 }
         }
     } catch (error) {
