@@ -6,8 +6,8 @@ const nextConfig = {
     instrumentationHook: true,
   },
   env: {
-    AWS_ACCESS_KEY: process.env.AWS_ACCESS_KEY,
-    AWS_SECRET_KEY: process.env.AWS_SECRET_KEY,
+    NEXT_AWS_ACCESS_KEY: process.env.NEXT_AWS_ACCESS_KEY,
+    NEXT_AWS_SECRET_KEY: process.env.NEXT_AWS_SECRET_KEY,
     NEXT_IMGBB_API_KEY: process.env.NEXT_IMGBB_API_KEY,
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
     R2_ACCOUNT_ID: process.env.R2_ACCOUNT_ID,

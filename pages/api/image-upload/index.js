@@ -20,8 +20,8 @@ const uploadFile = async (file, fileName) => {
     const S3_BUCKET = "komi-web";
     const REGION = "us-east-2";
     AWS.config.update({
-        accessKeyId: process.env.AWS_ACCESS_KEY,
-        secretAccessKey: process.env.AWS_SECRET_KEY,
+        accessKeyId: process.env.NEXT_AWS_ACCESS_KEY,
+        secretAccessKey: process.env.NEXT_AWS_SECRET_KEY,
     });
     const s3 = new S3({
         params: { Bucket: S3_BUCKET },
