@@ -40,8 +40,8 @@ export const EventsLayout = () => {
                         <div
                             key={item?.eventId}
                             onClick={() => router.push(`/event/${item?.eventId}`)}
-                            className=" cursor-pointer  rounded-xl hover:bg-slate-100 bg-white " >
-                            <div className="w-full lg:w-[18.75rem] h-[20.25rem] relative cursor-pointer " key={index}>
+                            className=" mx-auto cursor-pointer  rounded-xl hover:bg-slate-100 bg-white " >
+                            <div className="w-[22.5rem] mx-auto lg:w-[18.75rem] h-[20.25rem] relative cursor-pointer " key={index}>
                                 <Image src={item?.imageUrl} alt="event image" layout="fill" // required
                                     objectFit="cover" // change to suit your needs
                                     className="rounded-xl"
